@@ -5,19 +5,26 @@ import { COLORS, icons, SIZES, images, FONTS } from '../constants';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { isLoaded } from 'expo-font';
-
-
-
+import {PracticeProvider,ContextP} from "../context";
+import {useContext} from 'react';
 
 export const OrderDelivery = ({ route, navigation }) => {
+    const poor = 2
+    const average = 3.5
+    const veryGood = 5
+      
+    const {medicineData} = useContext(ContextP);
+    const {buyData,setBuyData} = useContext(ContextP);
     const [medicines, setMedicines] = React.useState(null)
     const [modal, setModal] = React.useState(false)
+    const [itemsModal, setItemsModal] = React.useState(null)
     const [orderItems, setOrderItems] = React.useState([])
     const [itemCounts , setItemCounts] = React.useState([])
     const [totals , setTotals] = React.useState([])
     const [fav, setFav] = React.useState("")
+    
+    const { item } = route.params;
     React.useEffect(() => {
-        let { item } = route.params;
         setMedicines(item)
     })
     function openModal() {
@@ -25,6 +32,14 @@ export const OrderDelivery = ({ route, navigation }) => {
     }
     function closeModal() {
         setModal(false)
+    }
+    function closeItemsModal(){
+        setItemsModal(false)
+    }
+    
+    function addingItems(){
+        setBuyData(item)
+        setItemsModal(true)
     }
     let orderList;
     function editOrder(action, id, price) {
@@ -80,10 +95,10 @@ export const OrderDelivery = ({ route, navigation }) => {
         return total
     }
     function closeAndNavigate() {
-        setModal(false)
+        setItemsModal(false)
 		let ord = sumOrder()
 		let itemC = getBasketItemCount()
-        navigation.navigate('Checkout', { medicines , ord, itemC})
+        navigation.navigate('Checkout', { medicines , buyData , ord, itemC})
     }
     function addFav() {
 
@@ -225,7 +240,7 @@ export const OrderDelivery = ({ route, navigation }) => {
 
 
                             <View style={{ width: "100%", height: '35%', flexDirection: 'row', justifyContent: 'center', }}>
-                                <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center',paddingHorizontal:8,paddingVertical:8 ,paddingLeft:0}}>
 
 
 
@@ -247,7 +262,7 @@ export const OrderDelivery = ({ route, navigation }) => {
 
                                                     key={priceRating}
                                                     style={{
-                                                        height: 20,
+                                                        height: "100%",
                                                         width: 20,
                                                         ...FONTS.body3,
                                                         tintColor: (priceRating <= medicines?.priceRating) ?
@@ -329,8 +344,15 @@ export const OrderDelivery = ({ route, navigation }) => {
                                     }}>
 
                                     </View>
+                                    {/* <Pressable
+                                        onPress={() => addingItems()}
+                                        style={{
+                                            height: '100%', width: "82%", backgroundColor: '#2A8C8D', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderRadius: 20
+                                        }}>
+                                        <Text style={{ fontWeight: 'bold', fontSize: SIZES.h3, color: 'white' }}>Add to Basket</Text>
+                                    </Pressable> */}
                                     <Pressable
-                                        onPress={() => openModal()}
+                                        onPress={() => addingItems()}
                                         style={{
                                             height: '100%', width: "82%", backgroundColor: '#2A8C8D', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderRadius: 20
                                         }}>
@@ -356,7 +378,7 @@ export const OrderDelivery = ({ route, navigation }) => {
 
                     </View>
                 </View>
-                <Modal
+                {/* <Modal
 
                     animationType='slide'
                     visible={modal}
@@ -458,6 +480,201 @@ export const OrderDelivery = ({ route, navigation }) => {
 
                                 </View>
                             </View>
+                            <View> */}
+                                {/* Order Button */}
+                                {/* <View
+                                    style={{
+                                        padding: SIZES.padding * 2,
+                                        alignItems: "center",
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Pressable
+                                        onPress={() => closeAndNavigate()}
+                                        style={{
+                                            width: SIZES.width * 0.9,
+                                            padding: SIZES.padding,
+                                            backgroundColor: COLORS.teel,
+                                            alignItems: 'center',
+                                            borderRadius: SIZES.radius,
+                                        }}
+
+                                    >
+                                        <Text style={{
+                                            color: COLORS.white,
+                                            ...FONTS.h2,
+                                            fontWeight: 'bold',
+
+                                        }}>
+                                            Go to checkout screen
+
+                                        </Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                            {isIphoneX() &&
+                                <View style={{
+                                    position: 'absolute',
+                                    bottom: -34,
+                                    left: 0,
+                                    right: 0,
+                                    height: 34,
+                                    backgroundColor: COLORS.white,
+                                }}>
+
+
+                                </View>
+                            }
+                        </View>
+                    </Pressable>
+                </Modal> */}
+                
+
+
+
+
+
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <Modal
+
+                    animationType='slide'
+                    visible={itemsModal}
+                    transparent={true}
+                    onRequestClose={() => setItemsModal(false)}
+
+
+
+                >
+                    <Pressable onPress={() => closeItemsModal()} style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: "rgba(0,0,0,0.6)", width: '100%' }}>
+                        <View
+                            style={{
+                                backgroundColor: COLORS.white,
+                                borderTopLeftRadius: 40,
+                                borderTopRightRadius: 40,
+
+                                width: '100%',
+                                height: '40%',
+                                justifyContent: 'flex-start',
+                                paddingBottom: 10,
+
+                                // marginTop: 56,
+
+
+                            }}
+                        >
+                            <View style={{
+                                height: '25%',
+                                width: '100%',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                                paddingVertical: SIZES.padding * 0,
+                                paddingHorizontal: SIZES.padding * 3,
+                                borderBottomColor: COLORS.lightGray2,
+                                borderBottomWidth: 0,
+                                alignItems: 'center',
+                                paddingTop: 20
+
+                            }}>
+                                <Pressable
+                                    onPress={() => closeItemsModal()}
+                                    style={{ justifyContent: 'center', alignItems: 'center', height: '60%', backgroundColor: 'lightgray', borderRadius: 5 }}
+                                >
+                                    <Icon name='chevron-back-outline' size={30} />
+                                </Pressable>
+                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>Order Details</Text>
+                                <Pressable
+                                    onPress={() => closeItemsModal()}
+                                    style={{ justifyContent: 'center', alignItems: 'center', height: '60%', backgroundColor: 'lightgray', borderRadius: 5 }}
+                                >
+                                    <Icon name='close-outline' size={30} />
+
+                                </Pressable>
+
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    paddingVertical: SIZES.padding * 2,
+                                    paddingHorizontal: SIZES.padding * 3,
+                                    borderBottomColor: COLORS.lightGray2,
+                                    borderBottomWidth: 1,
+
+                                }}
+                            >
+                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>{getBasketItemCount()} items in cart</Text>
+                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>${sumOrder().toFixed(2)}</Text>
+                            </View>
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                paddingVertical: SIZES.padding * 2,
+                                paddingHorizontal: SIZES.padding * 3,
+
+                            }}>
+                                <View style={{
+                                    flexDirection: 'row', alignItems: 'center'
+                                }}>
+                                    <Image
+                                        source={buyData?.photo}
+                                        resizeMode="contain"
+                                        style={{
+                                            width: 30,
+                                            height: 30,
+
+                                        }}
+                                    />
+                                    <Text
+                                        numberOfLines={1}
+                                        style={{ marginLeft: SIZES.padding, ...FONTS.h4, fontWeight: 'bold' }}>{buyData?.name}
+                                    </Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ ...FONTS.h4, fontWeight: 'bold' }}>${buyData?.price}</Text>
+
+
+                                </View>
+                            </View>
                             <View>
                                 {/* Order Button */}
                                 <View
@@ -506,6 +723,40 @@ export const OrderDelivery = ({ route, navigation }) => {
                         </View>
                     </Pressable>
                 </Modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </View>
 
         )
