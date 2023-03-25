@@ -19,8 +19,6 @@ import { useStateContext } from "../context/context";
 
 export const Home = ({ navigation }) => {
     const { buyData, medicineData } = useStateContext();
-    // console.log(medicineData);
-    // console.log(buyData);
     function CloseHome() {
         setShowHomePage(true);
     }

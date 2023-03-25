@@ -19,7 +19,7 @@ import { COLORS, icons, SIZES, images, FONTS } from "../constants";
 import { isIphoneX } from "react-native-iphone-x-helper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { isLoaded } from "expo-font";
-import { PracticeProvider, ContextP } from "../context/context";
+import { useStateContext } from "../context/context";
 import { useContext } from "react";
 
 export const OrderDelivery = ({ route, navigation }) => {
@@ -27,8 +27,7 @@ export const OrderDelivery = ({ route, navigation }) => {
     const average = 3.5;
     const veryGood = 5;
 
-    const { medicineData } = useContext(ContextP);
-    const { buyData, setBuyData } = useContext(ContextP);
+    const { buyData, medicineData, setBuyData } = useStateContext();
     const [medicines, setMedicines] = React.useState(null);
     const [modal, setModal] = React.useState(false);
     const [itemsModal, setItemsModal] = React.useState(null);
@@ -36,6 +35,9 @@ export const OrderDelivery = ({ route, navigation }) => {
     const [itemCounts, setItemCounts] = React.useState([]);
     const [totals, setTotals] = React.useState([]);
     const [fav, setFav] = React.useState("");
+
+    // state to hold the quantity of the item
+    const [quantity, setQuantity] = React.useState(0);
 
     const { item } = route.params;
     React.useEffect(() => {
@@ -51,38 +53,39 @@ export const OrderDelivery = ({ route, navigation }) => {
         setItemsModal(false);
     }
 
+    // adding item to cart
     function addingItems() {
-        setBuyData(item);
+        if (quantity > 0) {
+            // check if the item is already in the cart
+            let orderItem = buyData.find(
+                (existingItem) => existingItem.id == item.id
+            );
+
+            // if the item is already in the cart, increase the quantity else add the item to the cart
+            if (orderItem) {
+                setBuyData([
+                    ...buyData.filter(
+                        (existingItem) => existingItem.id != item.id
+                    ),
+                    { id: item.id, quantity: orderItem.quantity + quantity },
+                ]);
+            } else {
+                setBuyData([...buyData, { id: item.id, quantity: quantity }]);
+            }
+            // reset the quantity
+            setQuantity(0);
+        }
+
         setItemsModal(true);
     }
-    let orderList;
+    React.useEffect(() => {
+        console.log(buyData);
+    }, [buyData]);
+
     function editOrder(action, id, price) {
-        orderList = orderItems.slice();
-        let item = orderList.filter((a) => a.id == id);
-        if (action == "+") {
-            if (item.length > 0) {
-                let newQty = item[0].qty + 1;
-                item[0].qty = newQty;
-                item[0].total = item[0].qty * price;
-            } else {
-                const newItem = {
-                    id: id,
-                    qty: 1,
-                    price: price,
-                    total: price,
-                };
-                orderList.push(newItem);
-            }
-            setOrderItems(orderList);
-        } else {
-            if (item.length > 0) {
-                if (item[0]?.qty > 0) {
-                    let newQty = item[0].qty - 1;
-                    item[0].qty = newQty;
-                    item[0].total = newQty * price;
-                }
-            }
-            setOrderItems(orderList);
+        if (action === "+") setQuantity(quantity + 1);
+        else {
+            if (quantity > 0) setQuantity(quantity - 1);
         }
     }
 
@@ -197,7 +200,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                             resizeMode="contain"
                             source={medicines?.photo}
                             style={{
-                                height: "100%",
+                                height: 20 || "100%",
                                 width: "100%",
                                 borderRadius: 0,
                             }}
@@ -280,8 +283,8 @@ export const OrderDelivery = ({ route, navigation }) => {
                                         onPress={() =>
                                             editOrder(
                                                 "-",
-                                                medicines?.id,
-                                                medicines?.price
+                                                item?.id,
+                                                item?.price
                                             )
                                         }
                                     >
@@ -352,7 +355,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 fontSize: SIZES.h4,
                                             }}
                                         >
-                                            {getOrderqty(medicines?.id)}
+                                            {quantity}
                                         </Text>
                                     </View>
                                 </View>
@@ -395,7 +398,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 resizeMode="cover"
                                                 key={priceRating}
                                                 style={{
-                                                    height: "100%",
+                                                    height: 20 || "100%",
                                                     width: 20,
                                                     ...FONTS.body3,
                                                     tintColor:
@@ -430,8 +433,8 @@ export const OrderDelivery = ({ route, navigation }) => {
                                         onPress={() =>
                                             editOrder(
                                                 "+",
-                                                medicines?.id,
-                                                medicines?.price
+                                                item?.id,
+                                                item?.price
                                             )
                                         }
                                     >
@@ -537,7 +540,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 source={icons.heart}
                                                 resizeMode="contain"
                                                 style={{
-                                                    height: "60%",
+                                                    height: 20 || "60%",
                                                     width: "60%",
                                                     tintColor: "white",
                                                 }}
@@ -573,7 +576,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                             source={icons.cart}
                                             resizeMode="contain"
                                             style={{
-                                                height: "40%",
+                                                height: 40 || "40%",
                                                 width: "15%",
                                                 padding: 5,
                                                 tintColor: "white",

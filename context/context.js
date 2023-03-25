@@ -17,4 +17,5 @@ export const PracticeProvider = ({ children }) => {
             </ContextP.Provider>
         );
 };
+
 export const useStateContext = () => useContext(ContextP);
