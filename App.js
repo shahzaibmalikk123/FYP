@@ -1,6 +1,6 @@
 import { StatusBar } from 'react-native';
-import { StyleSheet, Text, View ,Image,Button, TouchableOpacity, SafeAreaView,Pressable,Animated} from 'react-native';
-import React, {useState } from 'react';
+import { StyleSheet, Text, View ,Image,Button, TouchableOpacity, ImageBackground,SafeAreaView,Pressable,Animated} from 'react-native';
+import React, {useState, useContext } from 'react';
 import {Home} from './screens/Home';
 import { OrderDelivery,Categories,Checkout}  from './screens/Index';
 import AppIntroSlider from 'react-native-app-intro-slider';
@@ -10,6 +10,7 @@ import { COLORS , icons,SIZES,images,FONTS} from './constants';
 import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import { Platform } from 'react-native';
 import Tabs from './navigation/tabs';
+import {PracticeProvider,ContextP} from "./context";
 const Stack = createStackNavigator();
 
 const slides =[
@@ -19,6 +20,7 @@ const slides =[
     description:'"Our website offers some of the very best prices on medicines and pharmaceutical products, together with a fantastic service"',
     Image : images.online_pharmacy1,
     
+    image:images.OB_bg3,
     
   },
   {
@@ -26,7 +28,7 @@ const slides =[
     title:'Health Care',
     description:'" Pharmacists are the health care team member with the most complete drug therapy knowledge, and they are prepared to use that information"',
     Image : images.health_care2,
-    
+    image : images.OB_bg3,
     
   },
   {
@@ -34,6 +36,8 @@ const slides =[
     title:'Fastest delivery',
     description:'"Order Medicine and get delivery in the fastest time in the town "',
     Image : images.delivery_3,
+    bgColor:"#62D7AF"
+    
     
   }
 ]
@@ -45,6 +49,42 @@ const App = ()=> {
     setShowHomePage(true);
   }
   
+  const buttonLabelNext =(label) =>{
+    return(
+      <View style={{
+        padding: 12,
+        justifyContent:'center',
+        alignItems:'center'
+      }}>
+        <Text style={{
+          color : 'grey',
+          fontWeight: "600",
+          fontSize: SIZES.h4
+        }}>
+          {label}
+        </Text>
+      </View>
+    )
+  }
+
+  const buttonLabelSkip =(label) =>{
+    return(
+      <View style={{
+        padding: 12,
+        justifyContent:'center',
+        alignItems:'center'
+      }}>
+        <Text style={{
+          color : 'teal',
+          fontWeight: "600",
+          fontSize: SIZES.h4
+        }}>
+          {label}
+        </Text>
+      </View>
+    )
+  }
+
   const buttonLabel =(label) =>{
     return(
       <View style={{
@@ -53,7 +93,7 @@ const App = ()=> {
         alignItems:'center'
       }}>
         <Text style={{
-          color : COLORS.title,
+          color : 'white',
           fontWeight: "600",
           fontSize: SIZES.h4
         }}>
@@ -70,22 +110,33 @@ const App = ()=> {
         data={slides}
         renderItem={({item})=>{
           return(
-            <SafeAreaView style={{flex:1,backgroundColor:"#62D7AF",paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
+            <SafeAreaView style={{flex:1,backgroundColor:'white' }}>
+              <ImageBackground 
+                source={item.image}
+                resizeMode="cover"
+                style={{
+                  flex:1,
+                  
+                }}
+              >
+                
+              
             <View style={{
               flex:1,
               alignItems:'center',
               padding:15,
               paddingTop:80,
-              backgroundColor:"#62D7AF",
+              backgroundColor:item.bgColor,
               
-
-            }}>
+              }}>
               
               <Image
               source={item.Image}
                 style={{
                   width:SIZES.width - 80,
                   height:400,
+                  ...styles.shadow
+                  
                 }}
                 resizeMode="contain"
               />
@@ -93,7 +144,7 @@ const App = ()=> {
                 style={{
                   fontWeight:'bold',
                   fontSize: SIZES.h1,
-                  color : COLORS.title,
+                  color : "#606467",
                   textAlign:"center"
 
                 }}
@@ -101,7 +152,7 @@ const App = ()=> {
               <Text style={{
                 textAlign:"center",
                 paddingTop: 5,
-                
+                color:'#606467'
                 
               }}>
                 {item.description}
@@ -112,7 +163,7 @@ const App = ()=> {
                 onPress={()=> showHome()}
                 style={{justifyContent:'center',height:'43%',alignItems:'center',width:'100%',flexDirection:'row',backgroundColor: "teal",borderRadius:30}}>
                   <Text style={{
-                    color:'white',
+                    color:'black',
                     fontSize:SIZES.h4,
                     fontWeight:'bold'
                   }}>
@@ -121,7 +172,7 @@ const App = ()=> {
                   <View style ={{width:'2%'}}></View>
                   <View style={{ 
                     height:'50%',
-                    width:'7%',
+                    width:'6%',
                     backgroundColor:'white',
                     borderRadius:30,
                     justifyContent:'center',
@@ -141,6 +192,7 @@ const App = ()=> {
                 </View>
               )}
             </View>
+            </ImageBackground>
             </SafeAreaView>
           )
         } }
@@ -149,8 +201,8 @@ const App = ()=> {
           width: 30
         }}
         showSkipButton
-        renderNextButton={()=> buttonLabel("Next")}
-        renderSkipButton={()=> buttonLabel("Skip")}
+        renderNextButton={()=> buttonLabelNext("Next")}
+        renderSkipButton={()=> buttonLabelSkip("Skip")}
         renderDoneButton={()=> buttonLabel("")}
         //bottomButton
         // onDone={()=> {
@@ -162,21 +214,23 @@ const App = ()=> {
   }
   
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-         screenOptions={{
-          headerShown :false
-        }}
-        initialRouteName={"Home"}
-      >
-        <Stack.Screen name ="Tabs" component={Tabs}/>
-        <Stack.Screen name='OrderDelivery' component={OrderDelivery}/>
-        <Stack.Screen name='Categories' component={Categories}/>
-        <Stack.Screen name='Checkout' component={Checkout}/>
-        
+    <PracticeProvider>
+      <NavigationContainer>
+        <Stack.Navigator 
+          screenOptions={{
+            headerShown :false
+          }}
+          initialRouteName={"Home"}
+        >
+          <Stack.Screen name ="Tabs" component={Tabs}/>
+          <Stack.Screen name='OrderDelivery' component={OrderDelivery}/>
+          <Stack.Screen name='Categories' component={Categories}/>
+          <Stack.Screen name='Checkout' component={Checkout}/>
+          
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PracticeProvider>
   );
 }
 
@@ -192,6 +246,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor:'#23AC8F'
-  }
+  },
+  shadow:{
+    shadowColor: "#000",
+    shadowOffset:{
+        width:0,
+        height:3,
+    },
+    shadowOpacity:0.1,
+    shadowRadius:3,
+    elevation:1,
+}
 });
 export default App;
