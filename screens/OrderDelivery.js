@@ -35,14 +35,18 @@ export const OrderDelivery = ({ route, navigation }) => {
     const [itemCounts, setItemCounts] = React.useState([]);
     const [totals, setTotals] = React.useState([]);
     const [fav, setFav] = React.useState("");
+    const [cartData, setCartData] = React.useState([]);
 
     // state to hold the quantity of the item
     const [quantity, setQuantity] = React.useState(0);
 
     const { item } = route.params;
+
+    // store the medicines data in the state
     React.useEffect(() => {
         setMedicines(item);
     });
+
     function openModal() {
         setModal(true);
     }
@@ -79,7 +83,16 @@ export const OrderDelivery = ({ route, navigation }) => {
         setItemsModal(true);
     }
     React.useEffect(() => {
-        console.log(buyData);
+        let orderItems = buyData.map((item) => {
+            let medicine = medicineData.find((a) => a.id == item.id);
+            return {
+                photo: medicine.photo,
+                price: medicine.price,
+                name: medicine.name,
+                quantity: item.quantity,
+            };
+        });
+        setCartData(orderItems);
     }, [buyData]);
 
     function editOrder(action, id, price) {
@@ -89,21 +102,25 @@ export const OrderDelivery = ({ route, navigation }) => {
         }
     }
 
-    function getOrderqty(id) {
-        let orderItem = orderItems.filter((a) => a.id == id);
-        if (orderItem.length > 0) {
-            return orderItem[0].qty;
-        }
-        return 0;
-    }
+    // function getOrderqty(id) {
+    //     let orderItem = orderItems.filter((a) => a.id == id);
+    //     if (orderItem.length > 0) {
+    //         return orderItem[0].qty;
+    //     }
+    //     return 0;
+    // }
     function getBasketItemCount() {
         let itemCount = orderItems.reduce((a, b) => a + (b.qty || 0), 0);
         return itemCount;
     }
 
     function sumOrder() {
-        let total = orderItems.reduce((a, b) => a + (b.total || 0), 0);
-        return total;
+        let total = 0;
+        buyData.map((item) => {
+            let medicine = medicineData.find((a) => a.id == item.id);
+            total += Number(medicine.price * item.quantity);
+        });
+        return total || 0;
     }
     function closeAndNavigate() {
         setItemsModal(false);
@@ -755,7 +772,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                     onRequestClose={() => setItemsModal(false)}
                 >
                     <Pressable
-                        onPress={() => closeItemsModal()}
+                        // onPress={() => closeItemsModal()}
                         style={{
                             flex: 1,
                             justifyContent: "flex-end",
@@ -839,94 +856,109 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 <Text
                                     style={{ ...FONTS.h3, fontWeight: "bold" }}
                                 >
-                                    {getBasketItemCount()} items in cart
+                                    {buyData.length > 1
+                                        ? buyData.length + " items"
+                                        : buyData.length + " item"}{" "}
+                                    in cart
                                 </Text>
                                 <Text
                                     style={{ ...FONTS.h3, fontWeight: "bold" }}
                                 >
-                                    ${sumOrder().toFixed(2)}
+                                    ${sumOrder()}
                                 </Text>
                             </View>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    paddingVertical: SIZES.padding * 2,
-                                    paddingHorizontal: SIZES.padding * 3,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <Image
-                                        source={buyData?.photo}
-                                        resizeMode="contain"
-                                        style={{
-                                            width: 30,
-                                            height: 30,
-                                        }}
-                                    />
-                                    <Text
-                                        numberOfLines={1}
-                                        style={{
-                                            marginLeft: SIZES.padding,
-                                            ...FONTS.h4,
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        {buyData?.name}
-                                    </Text>
-                                </View>
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            ...FONTS.h4,
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        ${buyData?.price}
-                                    </Text>
-                                </View>
-                            </View>
-                            <View>
-                                {/* Order Button */}
-                                <View
-                                    style={{
-                                        padding: SIZES.padding * 2,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Pressable
-                                        onPress={() => closeAndNavigate()}
-                                        style={{
-                                            width: SIZES.width * 0.9,
-                                            padding: SIZES.padding,
-                                            backgroundColor: COLORS.teel,
-                                            alignItems: "center",
-                                            borderRadius: SIZES.radius,
-                                        }}
-                                    >
-                                        <Text
+                            {/* View containing list of individual medicines and their subtotal */}
+                            <ScrollView scrollEnabled={true}>
+                                {buyData &&
+                                    cartData?.map((item, index) => (
+                                        <View
+                                            key={index}
                                             style={{
-                                                color: COLORS.white,
-                                                ...FONTS.h2,
-                                                fontWeight: "bold",
+                                                flexDirection: "row",
+                                                justifyContent: "space-between",
+                                                paddingHorizontal:
+                                                    SIZES.padding * 3,
+                                                paddingVertical: SIZES.padding,
                                             }}
                                         >
-                                            Go to checkout screen
-                                        </Text>
-                                    </Pressable>
+                                            <View
+                                                style={{
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Image
+                                                    source={item?.photo}
+                                                    resizeMode="contain"
+                                                    style={{
+                                                        width: 30,
+                                                        height: 30,
+                                                    }}
+                                                />
+                                                <Text
+                                                    numberOfLines={1}
+                                                    style={{
+                                                        marginLeft:
+                                                            SIZES.padding,
+                                                        ...FONTS.h4,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    {item?.name} (x
+                                                    {item?.quantity})
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        ...FONTS.h4,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    ${item?.price}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    ))}
+                            </ScrollView>
+                            {buyData.length > 0 && (
+                                <View>
+                                    {/* Order Button */}
+                                    <View
+                                        style={{
+                                            padding: SIZES.padding * 2,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <Pressable
+                                            onPress={() => closeAndNavigate()}
+                                            style={{
+                                                width: SIZES.width * 0.9,
+                                                padding: SIZES.padding,
+                                                backgroundColor: COLORS.teel,
+                                                alignItems: "center",
+                                                borderRadius: SIZES.radius,
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: COLORS.white,
+                                                    ...FONTS.h2,
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Go to checkout screen
+                                            </Text>
+                                        </Pressable>
+                                    </View>
                                 </View>
-                            </View>
+                            )}
                             {isIphoneX() && (
                                 <View
                                     style={{
