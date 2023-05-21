@@ -41,8 +41,13 @@ export const implants = require("../assets/icons/implants.png");
 export const plus = require("../assets/icons/plus.png");
 export const heart = require("../assets/icons/heart.png");
 export const cart = require("../assets/icons/cart.png");
+export const tests = require("../assets/icons/flask.png");
 
-
+export const coronavirus = require("../assets/icons/coronavirus.png");
+export const cancer = require("../assets/icons/ribbon.png");
+export const diabetes = require("../assets/icons/diabetes.png");
+export const blood = require("../assets/icons/blood.png");
+export const bloodclotting = require("../assets/icons/bloodclotting.png");
 export default {
     back,
     car,
@@ -85,4 +90,10 @@ export default {
     plus,
     heart,
     cart,
+    tests,
+    coronavirus,
+    cancer,
+    blood,
+    bloodclotting,
+    diabetes
 }

@@ -19,7 +19,7 @@ import { COLORS, icons, SIZES, images, FONTS } from "../constants";
 import { isIphoneX } from "react-native-iphone-x-helper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { isLoaded } from "expo-font";
-import { useStateContext } from "../context/context";
+import { useStateContext } from "../context";
 import { useContext } from "react";
 
 export const OrderDelivery = ({ route, navigation }) => {
@@ -44,6 +44,7 @@ export const OrderDelivery = ({ route, navigation }) => {
 
     // store the medicines data in the state
     React.useEffect(() => {
+        
         setMedicines(item);
     });
 
@@ -85,6 +86,7 @@ export const OrderDelivery = ({ route, navigation }) => {
     React.useEffect(() => {
         let orderItems = buyData.map((item) => {
             let medicine = medicineData.find((a) => a.id == item.id);
+            
             return {
                 photo: medicine.photo,
                 price: medicine.price,
@@ -126,7 +128,7 @@ export const OrderDelivery = ({ route, navigation }) => {
         setItemsModal(false);
         let ord = sumOrder();
         let itemC = getBasketItemCount();
-        navigation.navigate("Checkout", { medicines, buyData, ord, itemC });
+        navigation.navigate("Checkout", { medicines, buyData, ord, itemC , cartData});
     }
     function addFav() {}
     function renderHeader() {
@@ -215,9 +217,9 @@ export const OrderDelivery = ({ route, navigation }) => {
                     <View style={{ width: "100%", height: "100%" }}>
                         <Image
                             resizeMode="contain"
-                            source={medicines?.photo}
+                            source={{ uri:  medicines?.photo}}
                             style={{
-                                height: 20 || "100%",
+                                height: "100%",
                                 width: "100%",
                                 borderRadius: 0,
                             }}
@@ -476,6 +478,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                             }}
                         >
                             <Text
+                                
                                 style={{
                                     fontSize: SIZES.h5,
                                     fontWeight: "bold",
@@ -486,7 +489,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 Product Detail
                             </Text>
                             <View>
-                                <Text>{medicines?.description}</Text>
+                                <Text numberOfLines={5} ellipsizeMode='tail'  >{medicines?.description}</Text>
                             </View>
                         </View>
                         <View
@@ -570,13 +573,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                             width: "3%",
                                         }}
                                     ></View>
-                                    {/* <Pressable
-                                        onPress={() => addingItems()}
-                                        style={{
-                                            height: '100%', width: "82%", backgroundColor: '#2A8C8D', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', borderRadius: 20
-                                        }}>
-                                        <Text style={{ fontWeight: 'bold', fontSize: SIZES.h3, color: 'white' }}>Add to Basket</Text>
-                                    </Pressable> */}
+                                    
                                     <Pressable
                                         onPress={() => addingItems()}
                                         style={{
@@ -614,156 +611,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                         </View>
                     </View>
                 </View>
-                {/* <Modal
-
-                    animationType='slide'
-                    visible={modal}
-                    transparent={true}
-                    onRequestClose={() => setModal(false)}
-
-
-
-                >
-                    <Pressable onPress={() => closeModal()} style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: "rgba(0,0,0,0.6)", width: '100%' }}>
-                        <View
-                            style={{
-                                backgroundColor: COLORS.white,
-                                borderTopLeftRadius: 40,
-                                borderTopRightRadius: 40,
-
-                                width: '100%',
-                                height: '40%',
-                                justifyContent: 'flex-start',
-                                paddingBottom: 10,
-
-                                // marginTop: 56,
-
-
-                            }}
-                        >
-                            <View style={{
-                                height: '25%',
-                                width: '100%',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                paddingLeft: 20,
-                                paddingRight: 20,
-                                paddingVertical: SIZES.padding * 0,
-                                paddingHorizontal: SIZES.padding * 3,
-                                borderBottomColor: COLORS.lightGray2,
-                                borderBottomWidth: 0,
-                                alignItems: 'center',
-                                paddingTop: 20
-
-                            }}>
-                                <Pressable
-                                    onPress={() => closeModal()}
-                                    style={{ justifyContent: 'center', alignItems: 'center', height: '60%', backgroundColor: 'lightgray', borderRadius: 5 }}
-                                >
-                                    <Icon name='chevron-back-outline' size={30} />
-                                </Pressable>
-                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>Order Details</Text>
-                                <Pressable
-                                    onPress={() => closeModal()}
-                                    style={{ justifyContent: 'center', alignItems: 'center', height: '60%', backgroundColor: 'lightgray', borderRadius: 5 }}
-                                >
-                                    <Icon name='close-outline' size={30} />
-
-                                </Pressable>
-
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    paddingVertical: SIZES.padding * 2,
-                                    paddingHorizontal: SIZES.padding * 3,
-                                    borderBottomColor: COLORS.lightGray2,
-                                    borderBottomWidth: 1,
-
-                                }}
-                            >
-                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>{getBasketItemCount()} items in cart</Text>
-                                <Text style={{ ...FONTS.h3, fontWeight: 'bold' }}>${sumOrder().toFixed(2)}</Text>
-                            </View>
-                            <View style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                paddingVertical: SIZES.padding * 2,
-                                paddingHorizontal: SIZES.padding * 3,
-
-                            }}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <Image
-                                        source={medicines?.photo}
-                                        resizeMode="contain"
-                                        style={{
-                                            width: 30,
-                                            height: 30,
-
-                                        }}
-                                    />
-                                    <Text
-                                        numberOfLines={1}
-                                        style={{ marginLeft: SIZES.padding, ...FONTS.h4, fontWeight: 'bold' }}>{medicines?.name}
-                                    </Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ ...FONTS.h4, fontWeight: 'bold' }}>${medicines?.price}</Text>
-
-
-                                </View>
-                            </View>
-                            <View> */}
-                {/* Order Button */}
-                {/* <View
-                                    style={{
-                                        padding: SIZES.padding * 2,
-                                        alignItems: "center",
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Pressable
-                                        onPress={() => closeAndNavigate()}
-                                        style={{
-                                            width: SIZES.width * 0.9,
-                                            padding: SIZES.padding,
-                                            backgroundColor: COLORS.teel,
-                                            alignItems: 'center',
-                                            borderRadius: SIZES.radius,
-                                        }}
-
-                                    >
-                                        <Text style={{
-                                            color: COLORS.white,
-                                            ...FONTS.h2,
-                                            fontWeight: 'bold',
-
-                                        }}>
-                                            Go to checkout screen
-
-                                        </Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                            {isIphoneX() &&
-                                <View style={{
-                                    position: 'absolute',
-                                    bottom: -34,
-                                    left: 0,
-                                    right: 0,
-                                    height: 34,
-                                    backgroundColor: COLORS.white,
-                                }}>
-
-
-                                </View>
-                            }
-                        </View>
-                    </Pressable>
-                </Modal> */}
+               
 
                 <Modal
                     animationType="slide"
@@ -787,7 +635,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 borderTopRightRadius: 40,
 
                                 width: "100%",
-                                height: "40%",
+                                height: "60%",
                                 justifyContent: "flex-start",
                                 paddingBottom: 10,
 
@@ -868,7 +716,8 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 </Text>
                             </View>
                             {/* View containing list of individual medicines and their subtotal */}
-                            <ScrollView scrollEnabled={true}>
+                            <ScrollView  scrollEnabled={true}>
+                                <View >
                                 {buyData &&
                                     cartData?.map((item, index) => (
                                         <View
@@ -879,6 +728,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 paddingHorizontal:
                                                     SIZES.padding * 3,
                                                 paddingVertical: SIZES.padding,
+                                                
                                             }}
                                         >
                                             <View
@@ -888,7 +738,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 }}
                                             >
                                                 <Image
-                                                    source={item?.photo}
+                                                    source={{uri : item?.photo}}
                                                     resizeMode="contain"
                                                     style={{
                                                         width: 30,
@@ -924,7 +774,9 @@ export const OrderDelivery = ({ route, navigation }) => {
                                                 </Text>
                                             </View>
                                         </View>
+                                        
                                     ))}
+                                    </View>
                             </ScrollView>
                             {buyData.length > 0 && (
                                 <View>

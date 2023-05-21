@@ -14,75 +14,130 @@ import {
 } from "react-native";
 import { COLORS, icons, SIZES, images, FONTS } from "../constants";
 import { useFonts } from "expo-font";
-import { PracticeProvider, ContextP } from "../context/context";
-import { useStateContext } from "../context/context";
+import { PracticeProvider, ContextP } from "../context";
+import { useStateContext } from "../context";
+import axiosInstance from "../axios/axiosInstance";
 
 export const Home = ({ navigation }) => {
+    
     const { buyData, medicineData } = useStateContext();
-    function CloseHome() {
-        setShowHomePage(true);
-    }
-
-    const categoryData = [
-        {
-            id: 1,
-            name: "Liquid",
-            icon: icons.liquids,
-        },
-        {
-            id: 2,
-            name: "Tablets",
-            icon: icons.tablets,
-        },
-        {
-            id: 3,
-            name: "Capsules",
-            icon: icons.capsules,
-        },
-        {
-            id: 4,
-            name: "Topical",
-            icon: icons.topical,
-        },
-        {
-            id: 5,
-            name: "Drops",
-            icon: icons.suppositories,
-        },
-        {
-            id: 6,
-            name: "Suppositories",
-            icon: icons.drops,
-        },
-        {
-            id: 7,
-            name: "Inhalers",
-            icon: icons.inhaler,
-        },
-        {
-            id: 8,
-            name: "Injections",
-            icon: icons.injections,
-        },
-        {
-            id: 9,
-            name: "Implants",
-            icon: icons.implants,
-        },
-    ];
-    // price rating
+    const [medicines, setMedicines] = React.useState([]);
     const poor = 2;
     const average = 3.5;
     const veryGood = 5;
 
     const [categories, setCategories] = React.useState(categoryData);
     const [selectedCategory, setSelectedCategory] = React.useState(" ");
-    const [medicines, setMedicines] = React.useState(medicineData);
-    function onSelectCategory(category) {
-        //let medicineList = medicineData.filter( a => a.categories.includes(category.id))
-        //setMedicines(medicineList)
-        setSelectedCategory(category);
+    const [filteredMedicines, setFilteredMedicines] = React.useState([]);
+    const [allMedShow , setAllMedShow] = React.useState(true)
+    function CloseHome() {
+        setShowHomePage(true);
     }
+    function onSelectCategory(category) {
+        //let medicineList = medicines.filter( (item) => item.category.includes(category.name))
+        //setMedicines(medicineList)
+        
+        
+        
+        if(category.name === "all") setFilteredMedicines(medicines)
+        else {
+        const filteredMedicines = medicines.filter((item) =>  {
+            
+            
+            return item.category.trim().toLowerCase() === category.name.trim().toLowerCase()
+        });
+        setFilteredMedicines(filteredMedicines);
+        
+        }
+        
+        setSelectedCategory(category);
+
+        
+    }
+    React.useEffect(()=>{
+        
+        const getMedicines = async () =>{
+            
+            
+            
+            await axiosInstance.get(`medicines`).then( res => 
+            
+              {
+                
+                
+                setMedicines(res.data.map(med =>
+                    {
+                        return(
+                            {...med, id:med._id}
+                        )
+                    }))
+                
+                    setFilteredMedicines(res.data.map(med =>
+                        {
+                            return(
+                                {...med, id:med._id}
+                            )
+                        }))
+                
+            })
+          }
+
+        
+          getMedicines();
+          
+          
+    },[])
+    
+    
+    const categoryData = [
+        {
+            id: 6,
+            name: "all",
+            icon: icons.suppositories,
+        },
+        {
+            id: 1,
+            name: "syrup",
+            icon: icons.liquids,
+        },
+        {
+            id: 2,
+            name: "tablet",
+            icon: icons.tablets,
+        },
+        {
+            id: 3,
+            name: "capsule",
+            icon: icons.capsules,
+        },
+        {
+            id: 4,
+            name: "topical",
+            icon: icons.topical,
+        },
+        {
+            id: 5,
+            name: "drop",
+            icon: icons.drops,
+        },
+        
+        
+        {
+            id: 7,
+            name: "inhaler",
+            icon: icons.inhaler,
+        },
+        {
+            id: 8,
+            name: "injection",
+            icon: icons.injections,
+        },
+        
+    ];
+    
+    
+    
+   
 
     let fontsLoaded;
     fontsLoaded = useFonts({
@@ -107,9 +162,9 @@ export const Home = ({ navigation }) => {
                     }}
                 >
                     <Image
-                        source={icons.side_bar}
+                        source={images.logo}
                         resizeMode="contain"
-                        style={{ width: 30, height: 30, tintColor: "teal" }}
+                        style={{ width: 30, height: 30,}}
                     />
                 </Pressable>
                 <View
@@ -268,7 +323,8 @@ export const Home = ({ navigation }) => {
                         height: "100%",
                         flexWrap: "wrap",
                     }}
-                    onPress={() => onSelectCategory(item)}
+                     onPress={() => onSelectCategory(item)}
+                    
                 >
                     <View
                         style={{
@@ -388,10 +444,13 @@ export const Home = ({ navigation }) => {
                         borderTopLeftRadius: 35,
                     }}
                 >
-                    {medicines?.map((item, index) => {
+                    
+                    { 
+                        
+                    filteredMedicines?.map((item, index) => {
                         return (
                             <View
-                                key={item.id}
+                                key={item?.id}
                                 style={{
                                     width: "50%",
                                     padding: SIZES.padding * 2,
@@ -412,8 +471,10 @@ export const Home = ({ navigation }) => {
                                     }}
                                 >
                                     <Image
-                                        source={item.photo}
-                                        resizeMode="cover"
+                                        source={{
+                                            uri : item?.photo || "",
+                                        }}
+                                        resizeMode="contain"
                                         style={{
                                             height: 200,
                                             width: "100%",
@@ -469,7 +530,7 @@ export const Home = ({ navigation }) => {
                                 </View>
                             </View>
                         );
-                    })}
+                    }  )}
                 </View>
             </ScrollView>
         );

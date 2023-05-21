@@ -6,6 +6,8 @@ import { isIphoneX } from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LottieView from "lottie-react-native";
 
+import {Collapse,CollapseHeader, CollapseBody, AccordionList} from 'accordion-collapse-react-native';
+//import Animated from "react-native-reanimated";
 
 export const Checkout=({route,navigation})=>{
     const[detail,setDetail] = React.useState(null)
@@ -13,13 +15,27 @@ export const Checkout=({route,navigation})=>{
     const [totals, setTotals] = React.useState(null)
     const [orderItems, setOrderItems] = React.useState([])
     const [lottie,setLottie] = React.useState(false)
-
+    const [carttData, setCarttData ] = React.useState([])
+    const [buyyData , setBuyyData] = React.useState([])
+    const [accordion , setAccordion] = React.useState(false);
+    const [payAccordion , setPayAccordion] = React.useState(false);
+    const [personalAccordion , setPersonalAccordion] = React.useState(false);
+    const [ToEmpty, setToEmpty] = React.useState([])
+    
+    
+    
     React.useEffect(() => {
-        let { medicines , ord , itemC} = route.params;
+       
+        let { medicines , ord , itemC , cartData , buyData} = route.params;
         setItemCounts(itemC)
         setTotals(ord)
         setDetail(medicines)
+        setCarttData(cartData)
+        setBuyyData(buyData)
+        setToEmpty(buyData)
+        
     })
+    
     let orderList , Shipping=10;
     function editOrder(action, id, price) {
         orderList = orderItems.slice()
@@ -69,6 +85,7 @@ export const Checkout=({route,navigation})=>{
         return total_sum.toFixed(2)
     }
     function lottieAnimation(){
+        setToEmpty({})
         return setLottie(true)
     }
 
@@ -173,182 +190,429 @@ export const Checkout=({route,navigation})=>{
                     
                     flexDirection:'row'
                 }}>
-                    <View style={{
-                        width:'30%',
-                        height:'100%',
-                        backgroundColor:COLORS.lightGray,
-                        borderRadius:10
-                    }}>
-                        <Image
-                            source={detail?.photo}
-                            resizeMode='contain'
-                            style={{
-                                width:'100%',
-                                height:'100%'
-                            }}
-                        />
-                    </View>
-                    <View style={{
-                        width:'70%',
-                        height:'100%',
-                        
-                        padding:SIZES.padding*1.5,
-                        paddingTop:0,
-                        paddingBottom:0,
-                        flexDirection:'column'
-                    }}
                     
+                    <ScrollView scrollEnabled={true}
+                                showsVerticalScrollIndicator={false}
                     >
-                        <Text style={{
-                            fontWeight:'bold',
-                            fontSize:SIZES.h5,
-                            flexWrap:'wrap',
-                            
-                            height:'25%'
-
-                        }}>
-                            {detail?.name}
-                        </Text >
-                        <Text style={{
-                            
-                            flexWrap:'wrap',
-                            paddingTop:10,
-                            color:'gray',
-                            height:'35%',
-                          }}>
-                            ${detail?.price}.00
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection:'row',
-                                alignItems:'center',
-                                width:"100%",
-                                
-                                height:'40%'
-                            }}
-                        >
-
-                            <Text style={{fontWeight:'bold'}}>Total Items in Cart : {itemCounts}</Text>
-                        </View>
-
-                    </View>
-                    
+                                <View>
+                                {   buyyData &&
+                                    carttData?.map((item, index) => (
+                                        <View
+                                            key={index}
+                                            style={{
+                                                flexDirection: "row",
+                                                justifyContent: "space-between",
+                                                paddingHorizontal:
+                                                    SIZES.padding * 3,
+                                                paddingVertical: SIZES.padding,
+                                                
+                                            }}
+                                        >
+                                            <View
+                                                style={{
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Image
+                                                    source={{uri : item?.photo}}
+                                                    resizeMode="contain"
+                                                    style={{
+                                                        width: 30,
+                                                        height: 30,
+                                                    }}
+                                                />
+                                                <Text
+                                                    numberOfLines={1}
+                                                    style={{
+                                                        marginLeft:
+                                                            SIZES.padding,
+                                                        ...FONTS.h4,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    {item?.name} (x
+                                                    {item?.quantity})
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        ...FONTS.h4,
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    ${item?.price}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        
+                                    ))}
+                                    </View>
+                            </ScrollView>
 
                     
                 </View>
                 <View style={{
-                    width:'100%',
-                    height:'40%',
-                    
-                    paddingTop:SIZES.padding*2.5,
-                    paddingBottom:SIZES.padding*2,
-                    
+                    width:'100%',height:'35%',flex:1,
+                    //paddingTop:SIZES.padding*2.5,
+                    //paddingBottom:SIZES.padding*5,
+                    paddingVertical:10,
                 }}>
-                    <View style={{
-                        height:'50%',
-                        width:'100%',
-                       
-                        flexDirection:'column',
-                       
-                    }}>
-                        <Text style={{fontWeight:'bold',fontSize:SIZES.h4}}>Delivery Location</Text>
-                        <View style={{
-                        width:'100%',
-                        height:'80%',
-                        alignItems:'center',
-                        flexDirection:'row'
+                    <ScrollView nestedScrollEnabled={true} 
+                                showsVerticalScrollIndicator={false}
+                    style={{
+                        }}>
+                        
+                            <View style={{
+                                //height:'50%',
+                                width:'100%',
+                                flexDirection:'column',
+                                paddingBottom:0,
+                                }}>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',paddingBottom:0}}>
+                                    
+                                        <Text style={{fontWeight:'bold',fontSize:SIZES.h4}}>Personal Details</Text>
+                                    
+                                        <Pressable 
+                                                onPress={() => setPersonalAccordion(!personalAccordion)}
+                                                style={{
+                                                marginLeft:10,
+                                                backgroundColor:COLORS.lightGray,
+                                                borderRadius:15,
+                                                width:'6%',
+                                                alignItems:'center',
+                                                justifyContent:'center'
+                                    }}>
+                                        {!personalAccordion ? <Icon name="chevron-down-outline" style={{color:"teal"}} size={10}/>  : <Icon name="chevron-up-outline" size={10}/> }
+                                          
+                                        </Pressable>
+                                </View>
+                                { personalAccordion && 
+                                <View style={{
+                                    
+                                    width:'100%',
+                                    height:120, 
+                                    flexDirection:'column',
+                                }}> 
+                                    <View style={{
+                                    width:'100%',
+                                    flex:1,
+                                    alignItems:'center',
+                                    flexDirection:'row',
+                                    height:'50%'
+                                     }}>
+                                        <View style={{
+                                            height:"60%",
+                                            backgroundColor:COLORS.lightGray,
+                                            borderRadius:8,
+                                            width:'10%',
+                                            alignItems:'center',
+                                            justifyContent:'center'
+                                        }}>
+                                            <Icon name="people-outline" size={25} color="teal"/>
+                                        </View>
+                                        <View style={{
+                                            height:"60%",
+                                            width:'85%',
+                                            marginLeft:'5%',
+                                            flexDirection:'row',
+                                            
+                                        }}>
+                                            
+                                                <TextInput 
+                                                
+                                                placeholder='First Name'
+                                                style={{
+                                                    width:'47%',
+                                                    borderRadius:5,
+                                                    paddingLeft: 5,
+                                                    paddingRight:5,
+                                                    backgroundColor:COLORS.lightGray
+                                                    
+                                                }}/>
+                                                <TextInput 
+                                                placeholder='Last Name'
+                                                style={{
+                                                    marginLeft:'6%',
+                                                    width:'47%',
+                                                    borderRadius:5,
+                                                    paddingLeft: 5,
+                                                    backgroundColor:COLORS.lightGray
+                                                    
+                                                }}/>
+                                          </View>
 
-                    }}>
-                        <View style={{
-                            height:"50%",
-                            backgroundColor:COLORS.lightGray,
-                            borderRadius:8,
-                            width:'10%',
-                            alignItems:'center',
-                            justifyContent:'center'
-                        }}>
-                            <Icon name="location-outline" size={25} color="teal"/>
-                        </View>
-                        <View style={{
-                            height:"50%",
-                            width:'85%',
-                            marginLeft:'5%',
-                            flexDirection:'row',
+                                    </View>
+
+                                    <View style={{
+                                        width:'100%',
+                                        flex:1,
+                                    }}>
+                                        <View style={{
+                                            
+                                            width:'10%',
+                                            
+                                        }}>
+                                            
+                                        </View>
+                                        <View style={{
+                                        height:"100%",
+                                        width:'85%',
+                                        marginLeft:'15%',
+                                        flexDirection:'row',
+                                        alignContent:'center',
+                                        alignItems:'center',
+
+                                        
+                                    }}>
+                                        <TextInput 
+                                            
+                                            placeholder='Email'
+                                            style={{
+                                                width:'47%',
+                                                height:'60%',
+                                                borderRadius:5,
+                                                paddingLeft: 5,
+                                                paddingRight:5,
+                                                backgroundColor:COLORS.lightGray
+                                                
+                                            }}/>
+
+                                        <TextInput 
+                                            
+                                            placeholder='Contact No.'
+                                            style={{
+                                                width:'47%',
+                                                height:'60%',
+                                                borderRadius:5,
+                                                paddingLeft: 5,
+                                                paddingRight:5,
+                                                backgroundColor:COLORS.lightGray,
+                                                marginLeft:'6%'
+                                                
+                                            }}/>
+
+                                        </View>
+
+                                    </View>
+                                    
+                                </View>}
+
+                            </View>
+
+
+                            <View style={{
+                                //height:'50%',
+                                width:'100%',
+                                flexDirection:'column',
+                                paddingBottom:0,
+                                }}>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',paddingTop:10}}>
+                                    
+                                        <Text style={{fontWeight:'bold',fontSize:SIZES.h4}}>Delivery Location</Text>
+                                    
+                                        <Pressable 
+                                                onPress={() => setAccordion(!accordion)}
+                                                style={{
+                                                marginLeft:10,
+                                                backgroundColor:COLORS.lightGray,
+                                                borderRadius:15,
+                                                width:'6%',
+                                                alignItems:'center',
+                                                justifyContent:'center'
+                                    }}>
+                                        {!accordion ? <Icon name="chevron-down-outline" style={{color:"teal"}} size={10}/>  : <Icon name="chevron-up-outline" size={10}/> }
+                                           
+                                    </Pressable>
+                                </View>
+                                { accordion && 
+                                <View style={{
+                                    
+                                    width:'100%',
+                                    height:120,
+                                    flexDirection:'column',
+                                   
+                                }}> 
+                                    <View style={{
+                                    
+                                    width:'100%',
+                                    flex:1,
+                                    alignItems:'center',
+                                    flexDirection:'row',
+                                    height:'50%'
+                                    
+
+                                }}>
+                                    <View style={{
+                                        height:"60%",
+                                        backgroundColor:COLORS.lightGray,
+                                        borderRadius:8,
+                                        width:'10%',
+                                        alignItems:'center',
+                                        justifyContent:'center'
+                                    }}>
+                                        <Icon name="location-outline" size={25} color="teal"/>
+                                    </View>
+                                    <View style={{
+                                        height:"60%",
+                                        width:'85%',
+                                        marginLeft:'5%',
+                                        flexDirection:'row',
+                                        
+                                    }}>
+                                        
+                                            <TextInput 
+                                            
+                                            placeholder='Street Address'
+                                            style={{
+                                                width:'100%',
+                                                borderRadius:5,
+                                                paddingLeft: 5,
+                                                paddingRight:5,
+                                                backgroundColor:COLORS.lightGray
+                                                
+                                            }}/>
+                                            
+                                        
+                                        
+
+                                    </View>
+
+                                    </View>
+
+                                    <View style={{
+                                        width:'100%',
+                                        flex:1,
+                                    }}>
+                                        <View style={{
+                                            
+                                            width:'10%',
+                                            
+                                        }}>
+                                            
+                                        </View>
+                                        <View style={{
+                                        height:"100%",
+                                        width:'85%',
+                                        marginLeft:'15%',
+                                        flexDirection:'row',
+                                        alignContent:'center',
+                                        alignItems:'center',
+
+                                        
+                                    }}>
+                                        <TextInput 
+                                            
+                                            placeholder='City'
+                                            style={{
+                                                width:'47%',
+                                                height:'60%',
+                                                borderRadius:5,
+                                                paddingLeft: 5,
+                                                paddingRight:5,
+                                                backgroundColor:COLORS.lightGray
+                                                
+                                            }}/>
+
+                                        <TextInput 
+                                            
+                                            placeholder='Zip Code'
+                                            style={{
+                                                width:'47%',
+                                                height:'60%',
+                                                borderRadius:5,
+                                                paddingLeft: 5,
+                                                paddingRight:5,
+                                                backgroundColor:COLORS.lightGray,
+                                                marginLeft:'6%'
+                                                
+                                            }}/>
+
+                                        </View>
+
+                                    </View>
+                                    
+                                </View>}
+
+                            </View>
                             
-                        }}>
-                            
-                                <TextInput 
+                            <View style={{
+                                //height:'50%',
+                                width:'100%',
+                                flexDirection:'column',
                                 
-                                placeholder='Enter Address'
-                                style={{
-                                    width:'47%',
-                                    borderRadius:5,
-                                    paddingLeft: 5,
-                                    paddingRight:5,
-                                    backgroundColor:COLORS.lightGray
+                            }}>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',paddingTop:10}}>
+                            
+                                    <Text style={{fontWeight:'bold',fontSize:SIZES.h4}}>Payment Method</Text>
+                            
+                                    <Pressable 
+                                                onPress={() => setPayAccordion(!payAccordion)}
+                                                style={{
+                                                backgroundColor:COLORS.lightGray,
+                                                borderRadius:15,
+                                                width:'6%',
+                                                alignItems:'center',
+                                                justifyContent:'center'
+                                    }}>
+                                        {!payAccordion ? <Icon name="chevron-down-outline" style={{color:"teal"}} size={10}/>  : <Icon name="chevron-up-outline" size={10}/> }
+                                            
+                                        
+                                        
+                                    </Pressable>
+                                </View>
+                                { payAccordion && <View style={{
+                                width:'100%',
+                                height:70,
+                                alignItems:'center',
+                                flexDirection:'row',
+                                
+
+                            }}>
+                                <View style={{
+                                    height:"50%",
+                                    backgroundColor:COLORS.lightGray,
+                                    borderRadius:8,
+                                    width:'10%',
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+                                    <Icon name="cash-outline" size={25} color="teal"/>
+                                </View>
+                                <View style={{
+                                    height:"50%",
                                     
-                                }}/>
-                                <TextInput 
-                                placeholder='Apartment/Street no.'
-                                style={{
-                                    marginLeft:'6%',
-                                    width:'47%',
-                                    borderRadius:5,
-                                    paddingLeft: 5,
-                                    backgroundColor:COLORS.lightGray
+                                    width:'80%',
                                     
-                                }}/>
-                            
+                                    justifyContent:'center',
+                                    marginLeft:'5%',
+                                    flexDirection:'column'
+                                }}>
+                                    <Text style={{fontWeight:'bold'}}>Cash on Delivery</Text>
+                                    <Text style={{color:'gray',paddingTop:3}}>****-0921</Text>
+                                </View>
+                                
+
+                                </View> }
+                                
+                                
+
+                            </View>
                             
 
-                        </View>
-
-                        </View>
-
-                    </View>
-                    <View style={{
-                        height:'50%',
-                        width:'100%',
-                        flexDirection:'column',
-                        
-                    }}>
-                        <Text style={{fontWeight:'bold',fontSize:SIZES.h4}}>Payment Method</Text>
-                        <View style={{
-                        width:'100%',
-                        height:'80%',
-                        alignItems:'center',
-                        flexDirection:'row'
-
-                    }}>
-                        <View style={{
-                            height:"50%",
-                            backgroundColor:COLORS.lightGray,
-                            borderRadius:8,
-                            width:'10%',
-                            alignItems:'center',
-                            justifyContent:'center'
-                        }}>
-                            <Icon name="cash-outline" size={25} color="teal"/>
-                        </View>
-                        <View style={{
-                            height:"50%",
                             
-                            width:'80%',
-                            
-                            justifyContent:'center',
-                            marginLeft:'5%',
-                            flexDirection:'column'
-                        }}>
-                            <Text style={{fontWeight:'bold'}}>Cash on Delivery</Text>
-                            <Text style={{color:'gray',paddingTop:3}}>****-0921</Text>
-                        </View>
                         
 
-                        </View>
-                        
-                        
-
-                    </View>
+                    </ScrollView>
+                </View>
+                
+                <View style={{height:'5%',}}>
 
                 </View>
                 <View style={{
@@ -408,7 +672,7 @@ export const Checkout=({route,navigation})=>{
                     justifyContent:'space-between',
                      }}>
                         <Text style={{color:'gray',alignSelf:'center'}}>Total</Text>
-                        <Text style={{fontWeight:'bold',fontSize:SIZES.h2,alignSelf:'center'}}>${total_checkout()}</Text>
+                        <Text style={{fontWeight:'bold',fontSize:SIZES.h2,alignSelf:'center'}}>${total_checkout()}  </Text>
 
                     </View>
                     <View style={{
@@ -432,7 +696,7 @@ export const Checkout=({route,navigation})=>{
                             color:'white',
                             fontWeight:'bold',
 
-                        }}>CHECKOUT (${total_checkout()})</Text>
+                        }}>CHECKOUT (${total_checkout()})   </Text>
 
                         </Pressable>
 
@@ -463,6 +727,7 @@ export const Checkout=({route,navigation})=>{
                                     style={{flex:1}}
                                     source={require('../assets/tick.json')}
                                     autoPlay
+                                    loop={false}
                                 />
                         </View>
                         <View style={{
