@@ -44,7 +44,6 @@ export const OrderDelivery = ({ route, navigation }) => {
 
     // store the medicines data in the state
     React.useEffect(() => {
-        
         setMedicines(item);
     });
 
@@ -86,7 +85,7 @@ export const OrderDelivery = ({ route, navigation }) => {
     React.useEffect(() => {
         let orderItems = buyData.map((item) => {
             let medicine = medicineData.find((a) => a.id == item.id);
-            
+
             return {
                 photo: medicine.photo,
                 price: medicine.price,
@@ -128,8 +127,15 @@ export const OrderDelivery = ({ route, navigation }) => {
         setItemsModal(false);
         let ord = sumOrder();
         let itemC = getBasketItemCount();
-        navigation.navigate("Checkout", { medicines, buyData, ord, itemC , cartData});
+        navigation.navigate("Checkout", {
+            medicines,
+            buyData,
+            ord,
+            itemC,
+            cartData,
+        });
     }
+
     function addFav() {}
     function renderHeader() {
         return (
@@ -217,7 +223,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                     <View style={{ width: "100%", height: "100%" }}>
                         <Image
                             resizeMode="contain"
-                            source={{ uri:  medicines?.photo}}
+                            source={{ uri: medicines?.photo }}
                             style={{
                                 height: "100%",
                                 width: "100%",
@@ -478,7 +484,6 @@ export const OrderDelivery = ({ route, navigation }) => {
                             }}
                         >
                             <Text
-                                
                                 style={{
                                     fontSize: SIZES.h5,
                                     fontWeight: "bold",
@@ -489,7 +494,9 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 Product Detail
                             </Text>
                             <View>
-                                <Text numberOfLines={5} ellipsizeMode='tail'  >{medicines?.description}</Text>
+                                <Text numberOfLines={5} ellipsizeMode="tail">
+                                    {medicines?.description}
+                                </Text>
                             </View>
                         </View>
                         <View
@@ -573,7 +580,7 @@ export const OrderDelivery = ({ route, navigation }) => {
                                             width: "3%",
                                         }}
                                     ></View>
-                                    
+
                                     <Pressable
                                         onPress={() => addingItems()}
                                         style={{
@@ -611,7 +618,6 @@ export const OrderDelivery = ({ route, navigation }) => {
                         </View>
                     </View>
                 </View>
-               
 
                 <Modal
                     animationType="slide"
@@ -716,67 +722,69 @@ export const OrderDelivery = ({ route, navigation }) => {
                                 </Text>
                             </View>
                             {/* View containing list of individual medicines and their subtotal */}
-                            <ScrollView  scrollEnabled={true}>
-                                <View >
-                                {buyData &&
-                                    cartData?.map((item, index) => (
-                                        <View
-                                            key={index}
-                                            style={{
-                                                flexDirection: "row",
-                                                justifyContent: "space-between",
-                                                paddingHorizontal:
-                                                    SIZES.padding * 3,
-                                                paddingVertical: SIZES.padding,
-                                                
-                                            }}
-                                        >
+                            <ScrollView scrollEnabled={true}>
+                                <View>
+                                    {buyData &&
+                                        cartData?.map((item, index) => (
                                             <View
+                                                key={index}
                                                 style={{
                                                     flexDirection: "row",
-                                                    alignItems: "center",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    paddingHorizontal:
+                                                        SIZES.padding * 3,
+                                                    paddingVertical:
+                                                        SIZES.padding,
                                                 }}
                                             >
-                                                <Image
-                                                    source={{uri : item?.photo}}
-                                                    resizeMode="contain"
+                                                <View
                                                     style={{
-                                                        width: 30,
-                                                        height: 30,
-                                                    }}
-                                                />
-                                                <Text
-                                                    numberOfLines={1}
-                                                    style={{
-                                                        marginLeft:
-                                                            SIZES.padding,
-                                                        ...FONTS.h4,
-                                                        fontWeight: "bold",
+                                                        flexDirection: "row",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    {item?.name} (x
-                                                    {item?.quantity})
-                                                </Text>
-                                            </View>
-                                            <View
-                                                style={{
-                                                    flexDirection: "row",
-                                                    alignItems: "center",
-                                                }}
-                                            >
-                                                <Text
+                                                    <Image
+                                                        source={{
+                                                            uri: item?.photo,
+                                                        }}
+                                                        resizeMode="contain"
+                                                        style={{
+                                                            width: 30,
+                                                            height: 30,
+                                                        }}
+                                                    />
+                                                    <Text
+                                                        numberOfLines={1}
+                                                        style={{
+                                                            marginLeft:
+                                                                SIZES.padding,
+                                                            ...FONTS.h4,
+                                                            fontWeight: "bold",
+                                                        }}
+                                                    >
+                                                        {item?.name} (x
+                                                        {item?.quantity})
+                                                    </Text>
+                                                </View>
+                                                <View
                                                     style={{
-                                                        ...FONTS.h4,
-                                                        fontWeight: "bold",
+                                                        flexDirection: "row",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    ${item?.price}
-                                                </Text>
+                                                    <Text
+                                                        style={{
+                                                            ...FONTS.h4,
+                                                            fontWeight: "bold",
+                                                        }}
+                                                    >
+                                                        ${item?.price}
+                                                    </Text>
+                                                </View>
                                             </View>
-                                        </View>
-                                        
-                                    ))}
-                                    </View>
+                                        ))}
+                                </View>
                             </ScrollView>
                             {buyData.length > 0 && (
                                 <View>

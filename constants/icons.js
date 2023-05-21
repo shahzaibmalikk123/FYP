@@ -48,9 +48,12 @@ export const cancer = require("../assets/icons/ribbon.png");
 export const diabetes = require("../assets/icons/diabetes.png");
 export const blood = require("../assets/icons/blood.png");
 export const bloodclotting = require("../assets/icons/bloodclotting.png");
+export const cartIcon = require("../assets/icons/shopping-cart.png");
+
 export default {
     back,
     car,
+    cartIcon,
     cutlery,
     donut,
     drink,
@@ -82,7 +85,8 @@ export default {
     liquids,
     tablets,
     capsules,
-    topical,suppositories,
+    topical,
+    suppositories,
     drops,
     inhaler,
     injections,
@@ -95,5 +99,5 @@ export default {
     cancer,
     blood,
     bloodclotting,
-    diabetes
-}
+    diabetes,
+};
