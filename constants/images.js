@@ -1,4 +1,3 @@
-
 const avatar_1 = require("../assets/images/avatar-1.jpg");
 const avatar_2 = require("../assets/images/avatar-2.jpg");
 const avatar_3 = require("../assets/images/avatar-3.jpg");
@@ -49,6 +48,23 @@ const enalapril = require("../assets/images/enalapril.png");
 const albuterol = require("../assets/images/albuterol.png");
 const omeprazole = require("../assets/images/omeprazole.png");
 const booknow = require("../assets/images/booknow.png");
+const OB_bg1 = require("../assets/images/OB_bg1.png");
+const OB_bg2 = require("../assets/images/OB_bg2.png");
+const OB_bg3 = require("../assets/images/OB_bg3.png");
+const health_care3 = require("../assets/images/5.jpg");
+const labtest1 = require("../assets/images/labtest1.jpg");
+const labtest2 = require("../assets/images/labtest2.jpg");
+const coronatest = require("../assets/images/coronatest.jpg");
+const cancer = require("../assets/images/cancer.jpg");
+const diabetes = require("../assets/images/diabetes.jpg");
+const bloodtest = require("../assets/images/bloodtest.jpg");
+const bloodclotting = require("../assets/images/bloodclotting.jpg");
+const labtest3 = require("../assets/images/labtest3.jpg");
+const labtest4 = require("../assets/images/labtest4.jpg");
+const labtest5 = require("../assets/images/labtest5.jpg");
+const medxCure1 = require("../assets/images/medxCure1.png");
+const medxCure = require("../assets/images/medxCure.png");
+const logo = require("../assets/images/logo.png");
 
 export default {
     avatar_1,
@@ -60,14 +76,12 @@ export default {
     burger_restaurant_1,
     burger_restaurant_2,
     chicago_hot_dog,
-    crispy_chicken_burger,
-
+    crispy_chicken_burger,                            
     fries_restaurant,
     hawaiian_pizza,
     honey_mustard_chicken_burger,
     hot_dog_restaurant,
     ice_kacang,
-
     japanese_restaurant,
     kek_lapis_shop,
     kek_lapis,
@@ -101,5 +115,22 @@ export default {
     enalapril,
     albuterol,
     omeprazole,
-    booknow
+    booknow,
+    OB_bg1,
+    OB_bg2,
+    OB_bg3,
+    health_care3,
+    labtest1,
+    labtest2,
+    coronatest,
+    cancer,
+    diabetes,
+    bloodclotting,
+    bloodtest,
+    labtest3,
+    labtest4,
+    labtest5,
+    medxCure1,
+    medxCure,
+    logo
 }

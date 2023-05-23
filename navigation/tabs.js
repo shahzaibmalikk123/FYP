@@ -18,22 +18,27 @@ import { OrderDelivery } from "../screens/OrderDelivery";
 import {Cart} from "../screens/Cart";
 import { Search } from "../screens/Search";
 import {Checkout} from "../screens/Checkout";
+import {Login} from "../screens/Login";
+import{Profile} from "../screens/Profile";
+import { LabTests } from '../screens/LabTests';
 
 import { COLORS, icons } from "../constants";
 const Tab = createBottomTabNavigator();
 const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
-
+    const [selectedTab, setSelectedTab] = React.useState(true);
+    
     var isSelected = accessibilityState.selected
 
     if (isSelected) {
         return (
-            <View style={{ flex: 1, alignItems: "center" }}>
-                <View style={{ flexDirection: 'row', position: 'absolute', top: 0 }}>
+            <View style={{ flex: 1, alignItems: "center",backgroundColor: selectedTab ? 'teal' : "teal" }}>
+                <View style={{ flexDirection: 'row', position: 'absolute', top: 0, backgroundColor: COLORS.teel }}>
                     <View style={{ flex: 1, backgroundColor: COLORS.white }}></View>
                     <Svg
                         width={70}
                         height={61}
                         viewBox="0 0 75 61"
+                        
                         
                     >
                         <Path
@@ -89,18 +94,18 @@ const CustomTabBar = (props)=>{
                 left:0,
                 right:0,
                 height:30,
-                backgroundColor: COLORS.white
+                backgroundColor: COLORS.teel
             }}>
 
             </View>
-                <BottomTabBar {...props.props}/>
+                <BottomTabBar  {...props.props}/>
             
         </View>
     )
     }
     else{
         return(
-        <BottomTabBar {...props.props}/>
+        <BottomTabBar  {...props.props}/>
         );
         
     }
@@ -109,25 +114,28 @@ const CustomTabBar = (props)=>{
 }
 const Tabs = () => {
     
+    
     return (
         <Tab.Navigator
+           
             screenOptions={{
                 tabBarShowLabel:false,
                 headerShown:false,
-                 
+                
                 style: {
                     position: 'absolute',
                     left: 0,
                     bottom: 0,
                     right: 0,
                     borderTopWidth: 0,
-                    backgroundColor: "transparent",
+                    backgroundColor:'teal',
                     elevation: 0,
-
-                    
-                    
-                }
+                        
+                },
+                tabBarStyle: { backgroundColor: "teal" }, 
+                
             }}
+            
             tabBar={(props) => (
                 <CustomTabBar 
                     props={props}
@@ -146,6 +154,7 @@ const Tabs = () => {
                                 width: 25,
                                 height: 25,
                                 tintColor: focused ? COLORS.teel : COLORS.secondary,
+                                
                                 
                             }}
                         />
@@ -183,12 +192,12 @@ const Tabs = () => {
             />
 
             <Tab.Screen
-                name="Like"
-                component={Home}
+                name="Tests"
+                component={LabTests}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.like}
+                            source={icons.tests}
                             resizeMode="contain"
                             style={{
                                 width: 25,
@@ -207,7 +216,7 @@ const Tabs = () => {
 
             <Tab.Screen
                 name="User"
-                component={Home}
+                component={Profile}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
